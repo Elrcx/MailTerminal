@@ -1,6 +1,7 @@
 .idea/
 venv/
 *.pyc
+local_settings.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
