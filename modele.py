@@ -64,8 +64,11 @@ class User:
         SELECT * FROM users
         WHERE id = {id}
         LIMIT 1;"""
-        entry = execute_query(query)[0]
-        u = User(*entry)
+        try:
+            entry = execute_query(query)[0]
+            u = User(*entry)
+        except IndexError:
+            u = None
         return u
 
     @classmethod
@@ -74,8 +77,11 @@ class User:
         SELECT * FROM users
         WHERE username = '{username}'
         LIMIT 1;"""
-        entry = execute_query(query)[0]
-        u = User(*entry)
+        try:
+            entry = execute_query(query)[0]
+            u = User(*entry)
+        except IndexError:
+            u = None
         return u
 
     def __str__(self):
@@ -96,8 +102,10 @@ class Message:
                 FOREIGN KEY (to_id) REFERENCES users (id)
             );
         """
+        execute_query(query)
 
 
 if __name__ == '__main__':
-    u = User.get_by_username("Romek")
-    u.delete()
+    u = User.get_by_username("Jacek")
+    if u is not None:
+        u.delete()

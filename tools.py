@@ -6,9 +6,10 @@ def execute_query(query):
     with connect(**database_settings) as connection:
         connection.autocommit = True
         with connection.cursor() as cursor:
-            cursor.execute(query)
             try:
+                cursor.execute(query)
                 result = cursor.fetchall()
-            except:
+            except Exception as e:
+                print(e)
                 result = None
             return result
