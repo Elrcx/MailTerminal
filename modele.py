@@ -24,10 +24,11 @@ class User:
 
     def _update(self):
         query = f"""
-        UPDATE user SET
-        username = {self.username},
-        password = {self.password}
+        UPDATE users SET
+        username = '{self.username}',
+        password = '{self.password}'
         WHERE id = {self._id};"""
+        execute_query(query)
 
     def delete(self):
         pass
@@ -42,6 +43,20 @@ class User:
                     );
                 """
         pass
+
+    @classmethod
+    def get_by_id(cls, id):
+        query = f"""
+        SELECT * FROM users
+        WHERE id = {id}
+        LIMIT 1;"""
+        entry = execute_query(query)[0]
+        u = User(*entry)
+        return u
+
+    def __str__(self):
+        return f"{self._id} {self.username} {self.password}"
+
 
 
 class Message:
@@ -61,5 +76,8 @@ class Message:
 
 
 if __name__ == '__main__':
-    u = User(username='Jacek', password='hunter22')
-    u.save()
+    u2 = User.get_by_id(1)
+    print(u2)
+    u2.password = 'achtung2'
+    print(u2)
+    u2.save()
