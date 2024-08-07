@@ -31,18 +31,21 @@ class User:
         execute_query(query)
 
     def delete(self):
-        pass
+        query = f"""
+        DELETE FROM users WHERE id = {self._id};"""
+        execute_query(query)
+        self._id = None
 
     @classmethod
     def create_table(cls):
         query = """
-                    create table users (
-                        id serial primary key,
-                        username varchar(255),
-                        password varchar(80)
-                    );
-                """
-        pass
+            create table users (
+                id serial primary key,
+                username varchar(255),
+                password varchar(80)
+            );
+        """
+        execute_query(query)
 
     @classmethod
     def get_all(cls):
@@ -79,24 +82,22 @@ class User:
         return f"{self._id} {self.username} {self.password}"
 
 
-
 class Message:
     @classmethod
     def create_table(cls):
         query = """
-                    create table messages (
-                        id serial primary key,
-                        from_id int NOT NULL,
-                        to_id int NOT NULL,
-                        creation_date timestamp,
-                        text varchar(255),
-                        FOREIGN KEY (from_id) REFERENCES users (id),
-                        FOREIGN KEY (to_id) REFERENCES users (id)
-                    );
-                """
+            create table messages (
+                id serial primary key,
+                from_id int NOT NULL,
+                to_id int NOT NULL,
+                creation_date timestamp,
+                text varchar(255),
+                FOREIGN KEY (from_id) REFERENCES users (id),
+                FOREIGN KEY (to_id) REFERENCES users (id)
+            );
+        """
 
 
 if __name__ == '__main__':
-    u = User.get_by_username("Szymek")
-    u.password = "maseło"
-    u.save()
+    u = User.get_by_username("Romek")
+    u.delete()
