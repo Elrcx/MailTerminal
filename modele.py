@@ -45,10 +45,31 @@ class User:
         pass
 
     @classmethod
+    def get_all(cls):
+        query = f"""
+        SELECT * FROM users;"""
+        users = []
+        entries = execute_query(query)
+        for entry in entries:
+            u = User(*entry)
+            users.append(u)
+        return users
+
+    @classmethod
     def get_by_id(cls, id):
         query = f"""
         SELECT * FROM users
         WHERE id = {id}
+        LIMIT 1;"""
+        entry = execute_query(query)[0]
+        u = User(*entry)
+        return u
+
+    @classmethod
+    def get_by_username(cls, username):
+        query = f"""
+        SELECT * FROM users
+        WHERE username = '{username}'
         LIMIT 1;"""
         entry = execute_query(query)[0]
         u = User(*entry)
@@ -76,8 +97,6 @@ class Message:
 
 
 if __name__ == '__main__':
-    u2 = User.get_by_id(1)
-    print(u2)
-    u2.password = 'achtung2'
-    print(u2)
-    u2.save()
+    u = User.get_by_username("Szymek")
+    u.password = "maseło"
+    u.save()
