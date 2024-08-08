@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from tools import execute_query
 
 
@@ -104,8 +106,66 @@ class Message:
         """
         execute_query(query)
 
+    def __init__(self, id=None, from_id=None, to_id=None, creation_date=None, text=None):
+        self._id = id
+        self.from_id = from_id
+        self.to_id = to_id
+        self.creation_date = creation_date
+        self.text = text
+
+    @property
+    def id(self):
+        return self._id
+
+    def save(self):
+        query = f"""
+        INSERT INTO messages (from_id, to_id, creation_date, text)
+        VALUES ({self.from_id}, {self.to_id}, '{self.creation_date}', '{self.text}')
+        RETURNING id;"""
+        id = execute_query(query)[0][0]
+        self._id = id
+
+    @classmethod
+    def get_all(cls):
+        query = f"""
+        SELECT * FROM messages;"""
+        messages = []
+        entries = execute_query(query)
+        for entry in entries:
+            m = Message(*entry)
+            messages.append(m)
+        return messages
+
+    @classmethod
+    def get_by_sender_id(cls, id):
+        query = f"""
+        SELECT * FROM messages
+        WHERE from_id = {id};"""
+        messages = []
+        entries = execute_query(query)
+        for entry in entries:
+            m = Message(*entry)
+            messages.append(m)
+        return messages
+
+    @classmethod
+    def get_by_receiver_id(cls, id):
+        query = f"""
+        SELECT * FROM messages
+        WHERE to_id = {id};"""
+        messages = []
+        entries = execute_query(query)
+        for entry in entries:
+            m = Message(*entry)
+            messages.append(m)
+        return messages
+
+    def __str__(self):
+        return f"{self.from_id} {self.to_id} {self.creation_date} '{self.text}'"
+
 
 if __name__ == '__main__':
-    u = User.get_by_username("Jacek")
-    if u is not None:
-        u.delete()
+    m = Message.get_by_receiver_id(4)
+    for message in m:
+        print(message)
+
