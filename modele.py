@@ -164,8 +164,45 @@ class Message:
         return f"{self.from_id} {self.to_id} {self.creation_date} '{self.text}'"
 
 
+class Selection:
+    def __init__(self, function=None, text=None):
+        self._function = function
+        self.text = text
+
+    def execute(self):
+        return self._function()
+
+    @classmethod
+    def display_menu(cls, selections):
+        text = "Menu options:"
+        for id in range(len(selections)):
+            selection = selections[id]
+            text += f"\n {id + 1} - {selection.text}"
+        print(text)
+
+    @classmethod
+    def execute_input(cls, selections):
+        while True:
+            selected_option = None
+            try:
+                selected_option = int(input(f"\nSelect option (1-{len(selections)}): "))
+            except:
+                print("Please enter a number.")
+
+            if type(selected_option) is int:
+                selected_option -= 1
+                if selected_option > len(selections):
+                    print(f"Please select a number between 1 and {str(len(selections))}.")
+                else:
+                    return selections[selected_option].execute()
+
+
 if __name__ == '__main__':
-    m = Message.get_by_receiver_id(4)
+    u = User.get_all()
+    for user in u:
+        print(user)
+
+    m = Message.get_all()
     for message in m:
         print(message)
 
