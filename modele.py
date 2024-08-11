@@ -110,11 +110,11 @@ class Message:
         """
         execute_query(query)
 
-    def __init__(self, id=None, from_id=None, to_id=None, creation_date=None, text=None):
+    def __init__(self, id=None, from_id=None, to_id=None, text=None):
         self._id = id
         self.from_id = from_id
         self.to_id = to_id
-        self.creation_date = creation_date
+        self.creation_date = datetime.now()
         self.text = text
 
     @property
