@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 
 from tools import execute_query
@@ -177,24 +178,30 @@ class Selection:
         text = "Menu options:"
         for id in range(len(selections)):
             selection = selections[id]
-            text += f"\n {id + 1} - {selection.text}"
+            text += f"\n [{id + 1}] - {selection.text}"
         print(text)
 
     @classmethod
-    def execute_input(cls, selections):
+    def execute_input(cls, selections=None, upper_function=None):
+        print(" [0] - Back") if upper_function is not None else print(" [0] - Exit")
         while True:
             selected_option = None
             try:
-                selected_option = int(input(f"\nSelect option (1-{len(selections)}): "))
+                selected_option = int(input(f"\nSelect option (0-{len(selections)}): "))
             except:
-                print("Please enter a number.")
+                print("Please enter a valid number.")
 
             if type(selected_option) is int:
                 selected_option -= 1
-                if selected_option > len(selections):
-                    print(f"Please select a number between 1 and {str(len(selections))}.")
+                if selected_option > len(selections) or selected_option < -1:
+                    print(f"Please select a number between 1 and {str(len(selections))} or enter 0 to go backwards.")
                 else:
-                    return selections[selected_option].execute()
+                    if selected_option == -1 and upper_function is not None:
+                        upper_function()
+                    elif selected_option == -1 and upper_function is None:
+                        sys.exit()
+                    else:
+                        return selections[selected_option].execute()
 
 
 if __name__ == '__main__':
