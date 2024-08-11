@@ -11,6 +11,9 @@ class User:
         self.password = password
         pass
 
+    def id(self):
+        return self._id
+
     def save(self):
         if self._id is None:
             self._create()
@@ -144,9 +147,10 @@ class Message:
         WHERE from_id = {id};"""
         messages = []
         entries = execute_query(query)
-        for entry in entries:
-            m = Message(*entry)
-            messages.append(m)
+        if entries is not None:
+            for entry in entries:
+                m = Message(*entry)
+                messages.append(m)
         return messages
 
     @classmethod
@@ -156,9 +160,10 @@ class Message:
         WHERE to_id = {id};"""
         messages = []
         entries = execute_query(query)
-        for entry in entries:
-            m = Message(*entry)
-            messages.append(m)
+        if entries is not None:
+            for entry in entries:
+                m = Message(*entry)
+                messages.append(m)
         return messages
 
     def __str__(self):

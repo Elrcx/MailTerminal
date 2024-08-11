@@ -1,6 +1,7 @@
-from tools import execute_query, display_menu
+from tools import execute_query
 from modele import User, Message, Selection
 from local_settings import admin_password
+from format_display import format_message, format_menu_title
 
 
 current_user = None
@@ -10,28 +11,39 @@ def user_login_menu():
     global current_user
     login = input("Wpisz login: ")
     password = input("Wpisz hasło: ")
+    user = None
     try:
         user = User.get_by_username(login)
-        if user.password == password:
-            current_user = user
-            user_menu()
     except:
         pass
-    print("Nieprawidłowy login lub hasło.")
-    main_menu()
+    if user is not None and user.password == password:
+        current_user = user
+        user_menu()
+    else:
+        print("Nieprawidłowy login lub hasło.")
+        main_menu()
 
 
 def user_menu():
-    display_menu(f"Witaj {current_user.username}")
+    format_menu_title(f"Witaj {current_user.username}")
 
     selections = [
-        Selection(None, "Pokaż wiadomości"),
+        Selection(user_show_messages, "Pokaż wiadomości"),
         Selection(None, "Wyślij nową wiadomość"),
         Selection(None, "Zmień dane konta")
     ]
 
     Selection.display_menu(selections)
     Selection.execute_input(selections, main_menu)
+
+
+def user_show_messages():
+    global current_user
+    user_id = current_user.id()
+    messages = Message.get_by_receiver_id(user_id)
+    for message in messages:
+        print(format_message(message))
+    user_menu()
 
 
 def admin_login_menu():
@@ -45,7 +57,7 @@ def admin_login_menu():
 
 
 def admin_menu():
-    display_menu("Menu Administratora")
+    format_menu_title("Menu Administratora")
 
     selections = [
         Selection(admin_user_list, "Lista użytkowników"),
@@ -73,7 +85,7 @@ def admin_message_list():
 def main_menu():
     global current_user
     current_user = None
-    display_menu("Menu Główne")
+    format_menu_title("Menu Główne")
 
     selections = [
         Selection(user_login_menu, "Użytkownicy"),
