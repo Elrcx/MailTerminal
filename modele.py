@@ -183,18 +183,18 @@ class Selection:
 
     @classmethod
     def execute_input(cls, selections=None, upper_function=None):
-        print(" [0] - Back") if upper_function is not None else print(" [0] - Exit")
+        print(" [0] - Wróć") if upper_function is not None else print(" [0] - Wyjdź")
         while True:
             selected_option = None
             try:
-                selected_option = int(input(f"\nSelect option [0-{len(selections)}]: "))
+                selected_option = int(input(f"\nWybierz opcję [0-{len(selections)}]: "))
             except:
-                print("Please enter a valid number.")
+                print("Proszę wprowadzić prawidłową liczbę.")
 
             if type(selected_option) is int:
                 selected_option -= 1
                 if selected_option > len(selections) or selected_option < -1:
-                    print(f"Please select a number between 1 and {str(len(selections))} or enter 0 to go backwards.")
+                    print(f"Proszę wprowadzić liczbę między 1 a {str(len(selections))} lub wybrać 0 aby wrócić/wyjść.")
                 else:
                     if selected_option == -1 and upper_function is not None:
                         upper_function()
