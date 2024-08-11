@@ -1,9 +1,7 @@
-from datetime import datetime
-
-from tools import execute_query, change_credentials
 from modele import User, Message, Selection
 from local_settings import admin_password
 from format_display import format_message, format_menu_title
+from commands import send_message, change_credentials
 
 
 current_user = None
@@ -64,14 +62,7 @@ def user_send_message():
     to_id = input("Wprowadź id odbiorcy: ")
     text = input("Treść wiadomości: ")
 
-    try:
-        message = Message(from_id=user_id, to_id=to_id, creation_date=datetime.now(), text=text)
-        message.save()
-
-        receiver = User.get_by_id(to_id)
-        print(f"Wysłano wiadomość do użytkownika '{receiver.username}'")
-    except:
-        print("Wystąpił błąd przy wysyłaniu wiadomości.")
+    send_message(user_id, to_id, text)
     user_menu()
 
 

@@ -12,21 +12,3 @@ def execute_query(query):
                 print(e)
                 result = None
             return result
-
-
-def change_credentials(user, new_username, new_password):
-    if len(new_username) > 0:
-        if len(new_username) >= 5:
-            user.username = new_username
-            print(f"Zmieniono nazwę użytkownika na {new_username}.")
-        else:
-            print("Nazwa użytkownika musi mieć przynajmniej 5 znaków!")
-
-    if len(new_password) > 0:
-        if len(new_password) >= 8:
-            user.password = new_password
-            print(f"Zmieniono hasło użytkownika na {new_password}.")
-        else:
-            print("Hasło użytkownika musi mieć przynajmniej 8 znaków!")
-
-    user.save()
