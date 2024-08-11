@@ -2,7 +2,14 @@ from modele import User
 
 
 def format_menu_title(text):
-    print(f"""\n====== {text} ======""")
+    row_length = len(text) + 4 + 10
+    formatted_text = ""
+    for i in range(row_length):
+        formatted_text += "="
+    formatted_text += f"\n====== {text} ======\n"
+    for i in range(row_length):
+        formatted_text += "="
+    return formatted_text
 
 
 def format_message(message):

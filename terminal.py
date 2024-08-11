@@ -25,7 +25,7 @@ def user_login_menu():
 
 
 def user_menu():
-    format_menu_title(f"Witaj {current_user.username}")
+    print(format_menu_title(f"Witaj {current_user.username}"))
 
     selections = [
         Selection(user_show_messages, "Pokaż wiadomości"),
@@ -57,7 +57,7 @@ def admin_login_menu():
 
 
 def admin_menu():
-    format_menu_title("Menu Administratora")
+    print(format_menu_title("Menu Administratora"))
 
     selections = [
         Selection(admin_user_list, "Lista użytkowników"),
@@ -85,7 +85,7 @@ def admin_message_list():
 def main_menu():
     global current_user
     current_user = None
-    format_menu_title("Menu Główne")
+    print(format_menu_title("Menu Główne"))
 
     selections = [
         Selection(user_login_menu, "Użytkownicy"),
