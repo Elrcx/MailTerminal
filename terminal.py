@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from tools import execute_query
+from tools import execute_query, change_credentials
 from modele import User, Message, Selection
 from local_settings import admin_password
 from format_display import format_message, format_menu_title
@@ -33,7 +33,7 @@ def user_menu():
         Selection(user_show_received_messages, "Skrzynka odbiorcza"),
         Selection(user_show_sent_messages, "Skrzynka nadawcza"),
         Selection(user_send_message, "Wyślij nową wiadomość"),
-        Selection(user_change_data, "Zmień dane konta")
+        Selection(user_change_credentials, "Zmień dane konta")
     ]
 
     Selection.display_menu(selections)
@@ -75,26 +75,12 @@ def user_send_message():
     user_menu()
 
 
-def user_change_data():
+def user_change_credentials():
     global current_user
     new_username = input(f"Wpisz nową nazwę użytkownika (zostaw puste aby pominąć) [{current_user.username}]: ")
     new_password = input(f"Wpisz nowe hasło (zostaw puste aby pominąć) [{current_user.password}]: ")
 
-    if len(new_username) > 0:
-        if len(new_username) >= 5:
-            current_user.username = new_username
-            print(f"Zmieniono nazwę użytkownika na {new_username}.")
-        else:
-            print("Nazwa użytkownika musi mieć przynajmniej 5 znaków!")
-
-    if len(new_password) > 0:
-        if len(new_password) >= 8:
-            current_user.password = new_password
-            print(f"Zmieniono hasło użytkownika na {new_password}.")
-        else:
-            print("Hasło użytkownika musi mieć przynajmniej 8 znaków!")
-
-    current_user.save()
+    change_credentials(current_user, new_username, new_password)
     user_menu()
 
 
