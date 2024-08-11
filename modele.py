@@ -1,5 +1,4 @@
 import sys
-from datetime import datetime
 
 from tools import execute_query
 
@@ -110,11 +109,11 @@ class Message:
         """
         execute_query(query)
 
-    def __init__(self, id=None, from_id=None, to_id=None, text=None):
+    def __init__(self, id=None, from_id=None, to_id=None, creation_date=None, text=None):
         self._id = id
         self.from_id = from_id
         self.to_id = to_id
-        self.creation_date = datetime.now()
+        self.creation_date = creation_date
         self.text = text
 
     @property

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from tools import execute_query
 from modele import User, Message, Selection
 from local_settings import admin_password
@@ -28,8 +30,8 @@ def user_menu():
     print(format_menu_title(f"Witaj {current_user.username}"))
 
     selections = [
-        Selection(user_show_messages, "Skrzynka odbiorcza"),
-        Selection(None, "Skrzynka nadawcza"),
+        Selection(user_show_received_messages, "Skrzynka odbiorcza"),
+        Selection(user_show_sent_messages, "Skrzynka nadawcza"),
         Selection(user_send_message, "Wyślij nową wiadomość"),
         Selection(None, "Zmień dane konta")
     ]
@@ -38,10 +40,19 @@ def user_menu():
     Selection.execute_input(selections, main_menu)
 
 
-def user_show_messages():
+def user_show_received_messages():
     global current_user
     user_id = current_user.id()
     messages = Message.get_by_receiver_id(user_id)
+    for message in messages:
+        print(format_message(message))
+    user_menu()
+
+
+def user_show_sent_messages():
+    global current_user
+    user_id = current_user.id()
+    messages = Message.get_by_sender_id(user_id)
     for message in messages:
         print(format_message(message))
     user_menu()
@@ -54,7 +65,7 @@ def user_send_message():
     text = input("Treść wiadomości: ")
 
     try:
-        message = Message(from_id=user_id, to_id=to_id, text=text)
+        message = Message(from_id=user_id, to_id=to_id, creation_date=datetime.now(), text=text)
         message.save()
 
         receiver = User.get_by_id(to_id)
