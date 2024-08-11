@@ -175,7 +175,7 @@ class Selection:
 
     @classmethod
     def display_menu(cls, selections):
-        text = "Menu options:"
+        text = "Options:"
         for id in range(len(selections)):
             selection = selections[id]
             text += f"\n [{id + 1}] - {selection.text}"
@@ -187,7 +187,7 @@ class Selection:
         while True:
             selected_option = None
             try:
-                selected_option = int(input(f"\nSelect option (0-{len(selections)}): "))
+                selected_option = int(input(f"\nSelect option [0-{len(selections)}]: "))
             except:
                 print("Please enter a valid number.")
 
@@ -205,11 +205,5 @@ class Selection:
 
 
 if __name__ == '__main__':
-    u = User.get_all()
-    for user in u:
-        print(user)
-
-    m = Message.get_all()
-    for message in m:
-        print(message)
+    pass
 
