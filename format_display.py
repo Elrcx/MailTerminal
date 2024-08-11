@@ -12,7 +12,13 @@ def format_menu_title(text):
     return formatted_text
 
 
-def format_message(message):
+def format_message_from(message):
     sender = User.get_by_id(message.from_id)
-    text = f"> {sender.username} ({message.creation_date}): {message.text}"
+    text = f"> Od {sender.username} ({message.creation_date}): {message.text}"
+    return text
+
+
+def format_message_to(message):
+    receiver = User.get_by_id(message.to_id)
+    text = f"> Do {receiver.username} ({message.creation_date}): {message.text}"
     return text

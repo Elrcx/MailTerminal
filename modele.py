@@ -36,9 +36,9 @@ class User:
         execute_query(query)
 
     def delete(self):
-        query = f"""
-        DELETE FROM users WHERE id = {self._id};"""
-        execute_query(query)
+        self.username = "<UŻYTKOWNIK_USUNIĘTY>"
+        self.password = ""
+        self.save()
         self._id = None
 
     @classmethod
@@ -121,12 +121,28 @@ class Message:
         return self._id
 
     def save(self):
+        if self._id is None:
+            self._create()
+        else:
+            self._update()
+
+    def _create(self):
         query = f"""
         INSERT INTO messages (from_id, to_id, creation_date, text)
         VALUES ({self.from_id}, {self.to_id}, '{self.creation_date}', '{self.text}')
         RETURNING id;"""
         id = execute_query(query)[0][0]
         self._id = id
+
+    def _update(self):
+        query = f"""
+                UPDATE messages SET
+                from_id = {self.from_id},
+                to_id = {self.to_id},
+                creation_date = '{self.creation_date}',
+                text = '{self.text}'
+                WHERE id = {self._id};"""
+        execute_query(query)
 
     @classmethod
     def get_all(cls):

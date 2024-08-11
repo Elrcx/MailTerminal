@@ -1,10 +1,36 @@
 from modele import User, Message, Selection
 from local_settings import admin_password
-from format_display import format_message, format_menu_title
-from commands import send_message, change_credentials
+from format_display import format_message_from, format_message_to, format_menu_title
+from commands import send_message, change_credentials, register_user, delete_user
 
 
 current_user = None
+
+
+def user_submenu():
+    print(format_menu_title("Użytkownicy"))
+
+    selections = [
+        Selection(user_login_menu, "Zaloguj się"),
+        Selection(user_register_menu, "Zarejestruj nowego użytkownika")]
+
+    Selection.display_menu(selections)
+    Selection.execute_input(selections, main_menu)
+
+
+def user_register_menu():
+    global current_user
+    username = input("Wpisz nazwę użytkownika: ")
+    password = input("Wpisz hasło: ")
+
+    user = register_user(username, password)
+    if user is None:
+        print("Wystąpił błąd przy rejestracji!")
+        user_submenu()
+    else:
+        print("Użytkownik pomyślnie utworzony!")
+        current_user = user
+        user_menu()
 
 
 def user_login_menu():
@@ -31,7 +57,8 @@ def user_menu():
         Selection(user_show_received_messages, "Skrzynka odbiorcza"),
         Selection(user_show_sent_messages, "Skrzynka nadawcza"),
         Selection(user_send_message, "Wyślij nową wiadomość"),
-        Selection(user_change_credentials, "Zmień dane konta")
+        Selection(user_change_credentials, "Zmień dane konta"),
+        Selection(user_delete_account, "Usuń konto")
     ]
 
     Selection.display_menu(selections)
@@ -43,7 +70,7 @@ def user_show_received_messages():
     user_id = current_user.id()
     messages = Message.get_by_receiver_id(user_id)
     for message in messages:
-        print(format_message(message))
+        print(format_message_from(message))
     user_menu()
 
 
@@ -52,7 +79,7 @@ def user_show_sent_messages():
     user_id = current_user.id()
     messages = Message.get_by_sender_id(user_id)
     for message in messages:
-        print(format_message(message))
+        print(format_message_to(message))
     user_menu()
 
 
@@ -73,6 +100,17 @@ def user_change_credentials():
 
     change_credentials(current_user, new_username, new_password)
     user_menu()
+
+
+def user_delete_account():
+    global current_user
+    confirmation = input("Czy na pewno chcesz usunąć konto? [t/n]: ")
+    if confirmation.lower() == "t":
+        delete_user(current_user)
+        print("Użytkownik został usunięty.")
+        main_menu()
+    else:
+        user_menu()
 
 
 def admin_login_menu():
@@ -117,7 +155,7 @@ def main_menu():
     print(format_menu_title("Menu Główne"))
 
     selections = [
-        Selection(user_login_menu, "Użytkownicy"),
+        Selection(user_submenu, "Użytkownicy"),
         Selection(admin_login_menu, "Administrator")]
 
     Selection.display_menu(selections)
