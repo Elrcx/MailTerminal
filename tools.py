@@ -13,3 +13,7 @@ def execute_query(query):
                 print(e)
                 result = None
             return result
+
+
+def display_menu(text):
+    print(f"""====== {text} ======""")
