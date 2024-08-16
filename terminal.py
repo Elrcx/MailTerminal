@@ -1,19 +1,20 @@
 from modele import User, Message, Selection
 from local_settings import admin_password
 from format_display import format_message_from, format_message_to, format_menu_title
-from commands import send_message, change_credentials, register_user, delete_user, check_credentials, print_user_list
+from commands import send_message, change_credentials, register_user, delete_user, check_credentials, print_user_list, received_messages_by_id
 import argparse
 
 
 current_user = None
 parser = argparse.ArgumentParser()
+parser.add_argument("-l", "--list", help="Lista użytkowników", action="store_true")
 parser.add_argument("-c", "--create", help="Stwórz użytkownika (musi być podane razem z -u i -p", action="store_true")
 parser.add_argument("-u", "--username", help="Nazwa użytkownika")
 parser.add_argument("-p", "--password", help="Hasło użytkownika")
-parser.add_argument("-d", "--delete", help="Usuwanie użytkownika", action="store_true")
-parser.add_argument("-e", "--edit", help="Edycja użytkownika", action="store_true")
-parser.add_argument("-n", "--new_pass", help="Nowe hasło")
-parser.add_argument("-l", "--list", help="Lista użytkowników", action="store_true")
+parser.add_argument("-d", "--delete", help="Po zalogowaniu, usuwanie użytkownika", action="store_true")
+parser.add_argument("-e", "--edit", help="Po zalogowaniu, edycja użytkownika", action="store_true")
+parser.add_argument("-n", "--new_pass", help="Nowe hasło (po włączeniu edycji)")
+parser.add_argument("-m", "--messages", help="Po zalogowaniu, wyświetla listę wiadomości do użytkownika", action="store_true")
 
 
 def user_submenu():
@@ -73,12 +74,7 @@ def user_menu():
 def user_show_received_messages():
     global current_user
     user_id = current_user.id()
-    messages = Message.get_by_receiver_id(user_id)
-    print()
-    print("Otrzymane wiadomości (najnowsze na dole):")
-    print()
-    for message in messages:
-        print(format_message_from(message))
+    received_messages_by_id(user_id)
     print()
     input("Naciśnij ENTER aby wrócić.")
     user_menu()
@@ -175,6 +171,7 @@ def main_menu():
 
 
 def parse_provided_arguments(args):
+    global current_user
     if args.list is True:
         print_user_list()
         return None
@@ -188,23 +185,27 @@ def parse_provided_arguments(args):
 
     user = check_credentials(args.username, args.password)
     if user is not None:
-        perform_action_from_arguments(args, user)
+        current_user = user
+        perform_action_from_arguments(args)
     else:
         parser.print_help()
 
 
-def perform_action_from_arguments(args, user):
+def perform_action_from_arguments(args):
+    global current_user
+    user_id = current_user.id()
     if args.edit is True:
         if len(args.new_pass) > 8:
-            user.password = args.new_pass
-            user.save()
+            current_user.password = args.new_pass
+            current_user.save()
             print("Hasło zmienione pomyślnie!")
         else:
             print("Hasło musi mieć przynajmniej 8 znaków!")
     if args.delete is True:
-        user.delete()
+        current_user.delete()
         print("Użytkownik usunięty.")
-    pass
+    if args.messages is True:
+        received_messages_by_id(user_id)
 
 
 if __name__ == '__main__':

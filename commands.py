@@ -1,5 +1,6 @@
 from datetime import datetime
 from modele import User, Message
+from format_display import format_message_from
 
 
 def check_credentials(username, password):
@@ -69,3 +70,12 @@ def print_user_list():
     u = User.get_all()
     for user in u:
         print(user)
+
+
+def received_messages_by_id(user_id):
+    messages = Message.get_by_receiver_id(user_id)
+    print()
+    print("Otrzymane wiadomości (najnowsze na dole):")
+    print()
+    for message in messages:
+        print(format_message_from(message))
