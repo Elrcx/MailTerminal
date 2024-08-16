@@ -55,12 +55,24 @@ def delete_user(user):
     user.delete()
 
 
-def send_message(user_id, to_id, text):
+def send_message_by_id(user_id, to_id, text):
     try:
         message = Message(from_id=user_id, to_id=to_id, creation_date=datetime.now(), text=text)
         message.save()
 
         receiver = User.get_by_id(to_id)
+        print(f"Wysłano wiadomość do użytkownika '{receiver.username}'")
+    except:
+        print("Wystąpił błąd przy wysyłaniu wiadomości.")
+
+
+def send_message_by_name(user_id, to_name, text):
+    try:
+        receiver = User.get_by_username(to_name)
+        to_id = int(receiver.id())
+        message = Message(from_id=user_id, to_id=to_id, creation_date=datetime.now(), text=text)
+        message.save()
+
         print(f"Wysłano wiadomość do użytkownika '{receiver.username}'")
     except:
         print("Wystąpił błąd przy wysyłaniu wiadomości.")

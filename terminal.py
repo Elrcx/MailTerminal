@@ -1,7 +1,7 @@
 from modele import User, Message, Selection
 from local_settings import admin_password
 from format_display import format_message_from, format_message_to, format_menu_title
-from commands import send_message, change_credentials, register_user, delete_user, check_credentials, print_user_list, received_messages_by_id
+from commands import send_message_by_id, change_credentials, register_user, delete_user, check_credentials, print_user_list, received_messages_by_id, send_message_by_name
 import argparse
 
 
@@ -15,6 +15,8 @@ parser.add_argument("-d", "--delete", help="Po zalogowaniu, usuwanie użytkownik
 parser.add_argument("-e", "--edit", help="Po zalogowaniu, edycja użytkownika", action="store_true")
 parser.add_argument("-n", "--new_pass", help="Nowe hasło (po włączeniu edycji)")
 parser.add_argument("-m", "--messages", help="Po zalogowaniu, wyświetla listę wiadomości do użytkownika", action="store_true")
+parser.add_argument("-t", "--to", help="Po zalogowaniu, id lub nazwa użytkownika do którego wysyłamy wiadomość")
+parser.add_argument("-s", "--send", help="Po -t, treść wysyłanej wiadomości")
 
 
 def user_submenu():
@@ -100,7 +102,7 @@ def user_send_message():
     to_id = input("Wprowadź id odbiorcy: ")
     text = input("Treść wiadomości: ")
 
-    send_message(user_id, to_id, text)
+    send_message_by_id(user_id, to_id, text)
     user_menu()
 
 def user_change_credentials():
@@ -202,10 +204,17 @@ def perform_action_from_arguments(args):
         else:
             print("Hasło musi mieć przynajmniej 8 znaków!")
     if args.delete is True:
-        current_user.delete()
+        delete_user(current_user)
         print("Użytkownik usunięty.")
     if args.messages is True:
         received_messages_by_id(user_id)
+    if args.to is not None and args.send is not None:
+        try:
+            receiver_id = int(args.to)
+            send_message_by_id(user_id, receiver_id, args.send)
+        except:
+            receiver_name = args.to
+            send_message_by_name(user_id, receiver_name, args.send)
 
 
 if __name__ == '__main__':
