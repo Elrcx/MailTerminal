@@ -159,7 +159,8 @@ class Message:
     def get_by_sender_id(cls, id):
         query = f"""
         SELECT * FROM messages
-        WHERE from_id = {id};"""
+        WHERE from_id = {id}
+        ORDER BY creation_date;"""
         messages = []
         entries = execute_query(query)
         if entries is not None:
@@ -172,7 +173,8 @@ class Message:
     def get_by_receiver_id(cls, id):
         query = f"""
         SELECT * FROM messages
-        WHERE to_id = {id};"""
+        WHERE to_id = {id}
+        ORDER BY creation_date;"""
         messages = []
         entries = execute_query(query)
         if entries is not None:

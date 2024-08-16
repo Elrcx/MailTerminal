@@ -14,11 +14,11 @@ def format_menu_title(text):
 
 def format_message_from(message):
     sender = User.get_by_id(message.from_id)
-    text = f"> Od {sender.username} ({message.creation_date}): {message.text}"
+    text = f"> Od {sender.username} [ID:{sender.id()}] ({message.creation_date}):\n {message.text}"
     return text
 
 
 def format_message_to(message):
     receiver = User.get_by_id(message.to_id)
-    text = f"> Do {receiver.username} ({message.creation_date}): {message.text}"
+    text = f"> Do {receiver.username} [ID:{receiver.id()}] ({message.creation_date}):\n {message.text}"
     return text

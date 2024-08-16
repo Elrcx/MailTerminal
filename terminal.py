@@ -69,8 +69,13 @@ def user_show_received_messages():
     global current_user
     user_id = current_user.id()
     messages = Message.get_by_receiver_id(user_id)
+    print()
+    print("Otrzymane wiadomości (najnowsze na dole):")
+    print()
     for message in messages:
         print(format_message_from(message))
+    print()
+    input("Naciśnij ENTER aby wrócić.")
     user_menu()
 
 
@@ -78,8 +83,13 @@ def user_show_sent_messages():
     global current_user
     user_id = current_user.id()
     messages = Message.get_by_sender_id(user_id)
+    print()
+    print("Wysłane wiadomości (najnowsze na dole):")
+    print()
     for message in messages:
         print(format_message_to(message))
+    print()
+    input("Naciśnij ENTER aby wrócić.")
     user_menu()
 
 
@@ -91,7 +101,6 @@ def user_send_message():
 
     send_message(user_id, to_id, text)
     user_menu()
-
 
 def user_change_credentials():
     global current_user
