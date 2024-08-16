@@ -3,6 +3,7 @@ from local_settings import admin_password
 from format_display import format_message_from, format_message_to, format_menu_title
 from commands import send_message_by_id, change_credentials, register_user, delete_user, check_credentials, print_user_list, received_messages_by_id, send_message_by_name
 import argparse
+from cryptography import hash_password
 
 
 current_user = None
@@ -111,8 +112,8 @@ def user_send_message():
 
 def user_change_credentials():
     global current_user
-    new_username = input(f"Wpisz nową nazwę użytkownika (zostaw puste aby pominąć) [{current_user.username}]: ")
-    new_password = input(f"Wpisz nowe hasło (zostaw puste aby pominąć) [{current_user.password}]: ")
+    new_username = input(f"Wpisz nową nazwę użytkownika (zostaw puste aby pominąć): ")
+    new_password = input(f"Wpisz nowe hasło (zostaw puste aby pominąć): ")
 
     change_credentials(current_user, new_username, new_password)
     user_menu()
@@ -202,7 +203,7 @@ def perform_action_from_arguments(args):
     user_id = current_user.id()
     if args.edit is True:
         if len(args.new_pass) > 8:
-            current_user.password = args.new_pass
+            current_user.password = hash_password(args.new_pass)
             current_user.save()
             print("Hasło zmienione pomyślnie!")
         else:

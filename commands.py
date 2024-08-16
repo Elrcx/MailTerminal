@@ -1,6 +1,7 @@
 from datetime import datetime
 from modele import User, Message
 from format_display import format_message_from
+from cryptography import *
 
 
 def check_credentials(username, password):
@@ -9,7 +10,7 @@ def check_credentials(username, password):
         user = User.get_by_username(username)
     except:
         pass
-    if user is not None and user.password == password:
+    if user is not None and check_password(password, user.password):
         return user
     else:
         return None
@@ -25,7 +26,7 @@ def change_credentials(user, new_username, new_password):
 
     if len(new_password) > 0:
         if len(new_password) >= 8:
-            user.password = new_password
+            user.password = hash_password(new_password)
             print(f"Zmieniono hasło użytkownika na {new_password}.")
         else:
             print("Hasło użytkownika musi mieć przynajmniej 8 znaków!")
@@ -46,7 +47,9 @@ def register_user(new_username, new_password):
         print("Użytkownik o takiej nazwie już istnieje!")
         return None
 
-    user = User(username=new_username, password=new_password)
+    password_hashed = hash_password(new_password)
+
+    user = User(username=new_username, password=password_hashed)
     user.save()
     return user
 
