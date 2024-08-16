@@ -1,10 +1,19 @@
 from modele import User, Message, Selection
 from local_settings import admin_password
 from format_display import format_message_from, format_message_to, format_menu_title
-from commands import send_message, change_credentials, register_user, delete_user
+from commands import send_message, change_credentials, register_user, delete_user, check_credentials, print_user_list
+import argparse
 
 
 current_user = None
+parser = argparse.ArgumentParser()
+parser.add_argument("-c", "--create", help="Stwórz użytkownika (musi być podane razem z -u i -p", action="store_true")
+parser.add_argument("-u", "--username", help="Nazwa użytkownika")
+parser.add_argument("-p", "--password", help="Hasło użytkownika")
+parser.add_argument("-d", "--delete", help="Usuwanie użytkownika", action="store_true")
+parser.add_argument("-e", "--edit", help="Edycja użytkownika", action="store_true")
+parser.add_argument("-n", "--new_pass", help="Nowe hasło")
+parser.add_argument("-l", "--list", help="Lista użytkowników", action="store_true")
 
 
 def user_submenu():
@@ -37,12 +46,8 @@ def user_login_menu():
     global current_user
     login = input("Wpisz login: ")
     password = input("Wpisz hasło: ")
-    user = None
-    try:
-        user = User.get_by_username(login)
-    except:
-        pass
-    if user is not None and user.password == password:
+    user = check_credentials(login, password)
+    if user is not None:
         current_user = user
         user_menu()
     else:
@@ -145,9 +150,7 @@ def admin_menu():
 
 
 def admin_user_list():
-    u = User.get_all()
-    for user in u:
-        print(user)
+    print_user_list()
     admin_menu()
 
 
@@ -171,5 +174,42 @@ def main_menu():
     Selection.execute_input(selections)
 
 
+def parse_provided_arguments(args):
+    if args.list is True:
+        print_user_list()
+        return None
+    if args.create is True:
+        user = register_user(args.username, args.password)
+        if user is None:
+            print("Wystąpił błąd przy rejestracji!")
+        else:
+            print("Użytkownik pomyślnie utworzony!")
+        return None
+
+    user = check_credentials(args.username, args.password)
+    if user is not None:
+        perform_action_from_arguments(args, user)
+    else:
+        parser.print_help()
+
+
+def perform_action_from_arguments(args, user):
+    if args.edit is True:
+        if len(args.new_pass) > 8:
+            user.password = args.new_pass
+            user.save()
+            print("Hasło zmienione pomyślnie!")
+        else:
+            print("Hasło musi mieć przynajmniej 8 znaków!")
+    if args.delete is True:
+        user.delete()
+        print("Użytkownik usunięty.")
+    pass
+
+
 if __name__ == '__main__':
-    main_menu()
+    args = parser.parse_args()
+    if args.username is None and args.list is False:
+        main_menu()
+    else:
+        parse_provided_arguments(args)

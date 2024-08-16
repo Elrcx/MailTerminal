@@ -2,6 +2,18 @@ from datetime import datetime
 from modele import User, Message
 
 
+def check_credentials(username, password):
+    user = None
+    try:
+        user = User.get_by_username(username)
+    except:
+        pass
+    if user is not None and user.password == password:
+        return user
+    else:
+        return None
+
+
 def change_credentials(user, new_username, new_password):
     if len(new_username) > 0:
         if len(new_username) >= 5:
@@ -51,3 +63,9 @@ def send_message(user_id, to_id, text):
         print(f"Wysłano wiadomość do użytkownika '{receiver.username}'")
     except:
         print("Wystąpił błąd przy wysyłaniu wiadomości.")
+
+
+def print_user_list():
+    u = User.get_all()
+    for user in u:
+        print(user)
