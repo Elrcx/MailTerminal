@@ -99,10 +99,14 @@ def user_show_sent_messages():
 def user_send_message():
     global current_user
     user_id = current_user.id()
-    to_id = input("Wprowadź id odbiorcy: ")
+    to = input("Wprowadź id lub nazwę odbiorcy: ")
     text = input("Treść wiadomości: ")
 
-    send_message_by_id(user_id, to_id, text)
+    try:
+        to_id = int(to)
+        send_message_by_id(user_id, to_id, text)
+    except:
+        send_message_by_name(user_id, to, text)
     user_menu()
 
 def user_change_credentials():
